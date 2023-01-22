@@ -1,3 +1,5 @@
-# Spotify_recommendation
+# RhythmicRec
 
-https://piyush-mk-spotify-recommendation-app-aqseha.streamlit.app/
+Deployed at:
+
+https://rhythmicrec.streamlit.app/
