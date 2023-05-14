@@ -33,8 +33,10 @@ def n_neighbors_uri_audio(genre, start_year, end_year, test_feat):
     return uris, audios
 
 def page():
-    title = "Spotify song recommendation engine"
+    title = "SpotiRecsX"
     st.title(title)
+    
+    
 
     st.write("This is the place where you can customize what you want to listen to based on genre and several key audio features. Try playing around with different settings and listen to the songs recommended by our system!")
     st.markdown("##")
