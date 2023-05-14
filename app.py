@@ -6,7 +6,7 @@ from sklearn.neighbors import NearestNeighbors
 import plotly.express as px
 import streamlit.components.v1 as components
 
-@st.cache(allow_output_mutation=True)
+@st.cache_data
 def load_data():
     df = pd.read_csv("data/filtered_track_df.csv")
     df['genres'] = df.genres.apply(lambda x: [i[1:-1] for i in str(x)[1:-1].split(", ")])
