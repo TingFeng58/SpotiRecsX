@@ -6,6 +6,16 @@ from sklearn.neighbors import NearestNeighbors
 import plotly.express as px
 import streamlit.components.v1 as components
 
+def hide_anchor_link():
+    st.markdown("""
+        <style>
+        .css-15zrgzn {display: none}
+        .css-eczf16 {display: none}
+        .css-jn99sy {display: none}
+        </style>
+        """, unsafe_allow_html=True)
+hide_anchor_link()
+
 @st.cache_data
 def load_data():
     df = pd.read_csv("data/filtered_track_df.csv")
@@ -13,10 +23,17 @@ def load_data():
     exploded_track_df = df.explode("genres")
     return exploded_track_df
 
+@st.cache_data
+def load_user_data():
+    spotify_stream_df = pd.read_json("StreamingHistory0.json")
+    return spotify_stream_df
+
 genre_names = ['Dance Pop', 'Electronic', 'Electropop', 'Hip Hop', 'Jazz', 'K-pop', 'Latin', 'Pop', 'Pop Rap', 'R&B', 'Rock']
 audio_feats = ["acousticness", "danceability", "energy", "instrumentalness", "valence", "tempo"]
 
 exploded_track_df = load_data()
+
+user_data=load_user_data()
 
 def n_neighbors_uri_audio(genre, start_year, end_year, test_feat):
     genre = genre.lower()
@@ -32,13 +49,28 @@ def n_neighbors_uri_audio(genre, start_year, end_year, test_feat):
     audios = genre_data.iloc[n_neighbors][audio_feats].to_numpy()
     return uris, audios
 
-def page():
-    title = "SpotiRecsX"
-    st.title(title)
-    
-    
+def unique_artists(spotify_stream_df):
+    return len(spotify_stream_df["artistName"].unique())
 
-    st.write("This is the place where you can customize what you want to listen to based on genre and several key audio features. Try playing around with different settings and listen to the songs recommended by our system!")
+def page():
+    st.title(":violet[SpotiRecsX]")
+    
+    st.markdown("###")
+    st.write("### Here is your streaming statistics from Spotify")
+    st.divider()
+    with st.container():
+        col1, col2 = st.columns([1,1])
+        with col1:
+            n_unique_artists=unique_artists(user_data)
+            st.markdown("###")
+            st.markdown(f"#### <span style='color:#A7E9AF'>Total number of unique artists streamed</span>: <span style='color:#F5A9BC'>{n_unique_artists}</span>", unsafe_allow_html=True)
+            st.markdown("###")
+            st.write("Total number of songs streamed:")
+            st.markdown("###")
+    
+    st.markdown("###")
+    st.divider()
+    st.markdown("#### Try playing around with different settings and listen to the songs recommended by our system!", unsafe_allow_html=True)
     st.markdown("##")
 
     with st.container():
@@ -72,7 +104,7 @@ def page():
             tempo = st.slider(
                 'Tempo',
                 0.0, 244.0, 118.0)
-
+    st.divider()
     tracks_per_page = 6
     test_feat = [acousticness, danceability, energy, instrumentalness, valence, tempo]
     uris, audios = n_neighbors_uri_audio(genre, start_year, end_year, test_feat)
